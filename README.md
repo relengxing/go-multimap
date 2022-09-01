@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/jwangsadinata/go-multimap?status.svg)](https://godoc.org/github.com/jwangsadinata/go-multimap) [![Build Status](https://travis-ci.org/jwangsadinata/go-multimap.svg)](https://travis-ci.org/jwangsadinata/go-multimap) [![Go Report Card](https://goreportcard.com/badge/github.com/jwangsadinata/go-multimap)](https://goreportcard.com/report/github.com/jwangsadinata/go-multimap) [![Coverage Status](https://coveralls.io/repos/github/jwangsadinata/go-multimap/badge.svg?branch=master&service=github)](https://coveralls.io/github/jwangsadinata/go-multimap?branch=master&service=github) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/jwangsadinata/go-multimap/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/relengxing/go-multimap?status.svg)](https://godoc.org/github.com/relengxing/go-multimap) [![Build Status](https://travis-ci.org/relengxing/go-multimap.svg)](https://travis-ci.org/relengxing/go-multimap) [![Go Report Card](https://goreportcard.com/badge/github.com/relengxing/go-multimap)](https://goreportcard.com/report/github.com/relengxing/go-multimap) [![Coverage Status](https://coveralls.io/repos/github/relengxing/go-multimap/badge.svg?branch=master&service=github)](https://coveralls.io/github/relengxing/go-multimap?branch=master&service=github) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/relengxing/go-multimap/blob/master/LICENSE)
 
 # Go-Multimap
 
@@ -30,7 +30,7 @@ References:
 
 Install the package via the following:
 
-    go get -u github.com/jwangsadinata/go-multimap
+    go get -u github.com/relengxing/go-multimap
 
 ## Usage ##
 
@@ -42,7 +42,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/jwangsadinata/go-multimap/slicemultimap"
+	"github.com/relengxing/go-multimap/slicemultimap"
 )
 
 func main() {
@@ -103,5 +103,5 @@ To see the benchmark, run the following on each of the sub-packages:
 <p align="center"><img width="568" src="https://user-images.githubusercontent.com/13155377/38164452-435d48aa-352f-11e8-8a70-7a54f41b1610.png" /></p>
 
 
-Please see [the GoDoc API page](http://godoc.org/github.com/jwangsadinata/go-multimap) for a
+Please see [the GoDoc API page](http://godoc.org/github.com/relengxing/go-multimap) for a
 full API listing. For more examples, please consult `example_test.go` file located in each subpackages.

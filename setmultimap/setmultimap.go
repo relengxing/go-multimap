@@ -9,29 +9,29 @@
 //
 package setmultimap
 
-import multimap "github.com/jwangsadinata/go-multimap"
+import multimap "github.com/relengxing/go-multimap"
 
 var exists = struct{}{}
 
 // Set represents a set object
-type Set map[interface{}]struct{}
+type Set[V comparable] map[V]struct{}
 
 // MultiMap holds the elements in go's native map.
-type MultiMap struct {
-	m map[interface{}]Set
+type MultiMap[K comparable, V comparable] struct {
+	m map[K]Set[V]
 }
 
 // New instantiates a new multimap.
-func New() *MultiMap {
-	return &MultiMap{m: make(map[interface{}]Set)}
+func New[K comparable, V comparable]() *MultiMap[K, V] {
+	return &MultiMap[K, V]{m: make(map[K]Set[V])}
 }
 
 // Get searches the element in the multimap by key.
 // It returns its value or nil if key is not found in multimap.
 // Second return parameter is true if key was found, otherwise false.
-func (m *MultiMap) Get(key interface{}) (values []interface{}, found bool) {
+func (m *MultiMap[K, V]) Get(key K) (values []V, found bool) {
 	set, found := m.m[key]
-	values = make([]interface{}, len(set))
+	values = make([]V, len(set))
 	count := 0
 	for value := range set {
 		values[count] = value
@@ -41,41 +41,41 @@ func (m *MultiMap) Get(key interface{}) (values []interface{}, found bool) {
 }
 
 // Put stores a key-value pair in this multimap.
-func (m *MultiMap) Put(key interface{}, value interface{}) {
+func (m *MultiMap[K, V]) Put(key K, value V) {
 	set, found := m.m[key]
 	if found {
 		set[value] = exists
 	} else {
-		set = make(Set)
+		set = make(Set[V])
 		set[value] = exists
 		m.m[key] = set
 	}
 }
 
 // PutAll stores a key-value pair in this multimap for each of the values, all using the same key key.
-func (m *MultiMap) PutAll(key interface{}, values []interface{}) {
+func (m *MultiMap[K, V]) PutAll(key K, values []V) {
 	for _, value := range values {
 		m.Put(key, value)
 	}
 }
 
 // Contains returns true if this multimap contains at least one key-value pair with the key key and the value value.
-func (m *MultiMap) Contains(key interface{}, value interface{}) bool {
+func (m *MultiMap[K, V]) Contains(key K, value V) bool {
 	set, found := m.m[key]
 	if _, ok := set[value]; ok {
-		return true && found
+		return found
 	}
-	return false && found
+	return false
 }
 
 // ContainsKey returns true if this multimap contains at least one key-value pair with the key key.
-func (m *MultiMap) ContainsKey(key interface{}) (found bool) {
+func (m *MultiMap[K, V]) ContainsKey(key K) (found bool) {
 	_, found = m.m[key]
 	return
 }
 
 // ContainsValue returns true if this multimap contains at least one key-value pair with the value value.
-func (m *MultiMap) ContainsValue(value interface{}) bool {
+func (m *MultiMap[K, V]) ContainsValue(value V) bool {
 	for _, set := range m.m {
 		if _, ok := set[value]; ok {
 			return true
@@ -85,7 +85,7 @@ func (m *MultiMap) ContainsValue(value interface{}) bool {
 }
 
 // Remove removes a single key-value pair from this multimap, if such exists.
-func (m *MultiMap) Remove(key interface{}, value interface{}) {
+func (m *MultiMap[K, V]) Remove(key K, value V) {
 	set, found := m.m[key]
 	if found {
 		delete(set, value)
@@ -96,17 +96,17 @@ func (m *MultiMap) Remove(key interface{}, value interface{}) {
 }
 
 // RemoveAll removes all values associated with the key from the multimap.
-func (m *MultiMap) RemoveAll(key interface{}) {
+func (m *MultiMap[K, V]) RemoveAll(key K) {
 	delete(m.m, key)
 }
 
 // Empty returns true if multimap does not contain any key-value pairs.
-func (m *MultiMap) Empty() bool {
+func (m *MultiMap[K, V]) Empty() bool {
 	return m.Size() == 0
 }
 
 // Size returns number of key-value pairs in the multimap.
-func (m *MultiMap) Size() int {
+func (m *MultiMap[K, V]) Size() int {
 	size := 0
 	for _, set := range m.m {
 		size += len(set)
@@ -116,8 +116,8 @@ func (m *MultiMap) Size() int {
 
 // Keys returns a view collection containing the key from each key-value pair in this multimap.
 // This is done without collapsing duplicates.
-func (m *MultiMap) Keys() []interface{} {
-	keys := make([]interface{}, m.Size())
+func (m *MultiMap[K, V]) Keys() []K {
+	keys := make([]K, m.Size())
 	count := 0
 	for key, value := range m.m {
 		for range value {
@@ -129,8 +129,8 @@ func (m *MultiMap) Keys() []interface{} {
 }
 
 // KeySet returns all distinct keys contained in this multimap.
-func (m *MultiMap) KeySet() []interface{} {
-	keys := make([]interface{}, len(m.m))
+func (m *MultiMap[K, V]) KeySet() []K {
+	keys := make([]K, len(m.m))
 	count := 0
 	for key := range m.m {
 		keys[count] = key
@@ -141,8 +141,8 @@ func (m *MultiMap) KeySet() []interface{} {
 
 // Values returns all values from each key-value pair contained in this multimap.
 // This is done without collapsing duplicates. (size of Values() = MultiMap.Size()).
-func (m *MultiMap) Values() []interface{} {
-	values := make([]interface{}, m.Size())
+func (m *MultiMap[K, V]) Values() []V {
+	values := make([]V, m.Size())
 	count := 0
 	for _, set := range m.m {
 		for value := range set {
@@ -159,12 +159,12 @@ func (m *MultiMap) Values() []interface{} {
 //   - var entry = m.Entries()[0]
 //   - var key = entry.Key
 //   - var value = entry.Value
-func (m *MultiMap) Entries() []multimap.Entry {
-	entries := make([]multimap.Entry, m.Size())
+func (m *MultiMap[K, V]) Entries() []multimap.Entry[K, V] {
+	entries := make([]multimap.Entry[K, V], m.Size())
 	count := 0
 	for key, set := range m.m {
 		for value := range set {
-			entries[count] = multimap.Entry{Key: key, Value: value}
+			entries[count] = multimap.Entry[K, V]{Key: key, Value: value}
 			count++
 		}
 	}
@@ -172,6 +172,6 @@ func (m *MultiMap) Entries() []multimap.Entry {
 }
 
 // Clear removes all elements from the map.
-func (m *MultiMap) Clear() {
-	m.m = make(map[interface{}]Set)
+func (m *MultiMap[K, V]) Clear() {
+	m.m = make(map[K]Set[V])
 }

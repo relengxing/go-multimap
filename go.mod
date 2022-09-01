@@ -1,3 +1,3 @@
-module github.com/jwangsadinata/go-multimap
+module github.com/relengxing/go-multimap
 
-go 1.12
+go 1.18

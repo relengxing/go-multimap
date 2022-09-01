@@ -19,29 +19,29 @@
 package multimap
 
 // Entry represents a key/value pair inside a multimap.
-type Entry struct {
-	Key   interface{}
-	Value interface{}
+type Entry[K comparable, V any] struct {
+	Key   K
+	Value V
 }
 
 // MultiMap interface that all multimaps implement.
-type MultiMap interface {
-	Get(key interface{}) (value []interface{}, found bool)
+type MultiMap[K comparable, V any] interface {
+	Get(key K) (values []V, found bool)
 
-	Put(key interface{}, value interface{})
-	PutAll(key interface{}, value []interface{})
+	Put(key K, value V)
+	PutAll(key K, values []V)
 
-	Remove(key interface{}, value interface{})
-	RemoveAll(key interface{})
+	Remove(key K, value V)
+	RemoveAll(key K)
 
-	Contains(key interface{}, value interface{}) bool
-	ContainsKey(key interface{}) bool
-	ContainsValue(value interface{}) bool
+	Contains(key K, value V) bool
+	ContainsKey(key K) bool
+	ContainsValue(value V) bool
 
-	Entries() []Entry
-	Keys() []interface{}
-	KeySet() []interface{}
-	Values() []interface{}
+	Entries() []Entry[K, V]
+	Keys() []K
+	KeySet() []K
+	Values() []V
 
 	Clear()
 	Empty() bool

@@ -5,13 +5,13 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/jwangsadinata/go-multimap/slicemultimap"
+	"github.com/relengxing/go-multimap/slicemultimap"
 )
 
 // The following examples is to demonstrate basic usage of MultiMap.
 func ExampleMultiMap_Clear() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -32,7 +32,7 @@ func ExampleMultiMap_Clear() {
 
 func ExampleMultiMap_Contains() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -57,7 +57,7 @@ func ExampleMultiMap_Contains() {
 
 func ExampleMultiMap_ContainsKey() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -82,7 +82,7 @@ func ExampleMultiMap_ContainsKey() {
 
 func ExampleMultiMap_ContainsValue() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -107,7 +107,7 @@ func ExampleMultiMap_ContainsValue() {
 
 func ExampleMultiMap_Get() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -127,7 +127,7 @@ func ExampleMultiMap_Get() {
 	tmp := make([]string, len(value))
 	count := 0
 	for _, s := range value {
-		tmp[count] = s.(string)
+		tmp[count] = s
 		count++
 	}
 	sort.Strings(tmp)
@@ -141,7 +141,7 @@ func ExampleMultiMap_Get() {
 
 func ExampleMultiMap_Put() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -157,7 +157,7 @@ func ExampleMultiMap_Put() {
 
 func ExampleMultiMap_Entries() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -177,7 +177,7 @@ func ExampleMultiMap_Entries() {
 		tmp[count] = struct {
 			Key   int
 			Value string
-		}{e.Key.(int), e.Value.(string)}
+		}{e.Key, e.Value}
 		count++
 	}
 	sort.Sort(byKeyThenValue(tmp))
@@ -189,7 +189,7 @@ func ExampleMultiMap_Entries() {
 
 func ExampleMultiMap_Keys() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -203,7 +203,7 @@ func ExampleMultiMap_Keys() {
 	tmp := make([]int, len(keys))
 	count := 0
 	for _, key := range keys {
-		tmp[count] = key.(int)
+		tmp[count] = key
 		count++
 	}
 	sort.Ints(tmp)
@@ -215,7 +215,7 @@ func ExampleMultiMap_Keys() {
 
 func ExampleMultiMap_KeySet() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -229,7 +229,7 @@ func ExampleMultiMap_KeySet() {
 	tmp := make([]int, len(keys))
 	count := 0
 	for _, key := range keys {
-		tmp[count] = key.(int)
+		tmp[count] = key
 		count++
 	}
 	sort.Ints(tmp)
@@ -241,7 +241,7 @@ func ExampleMultiMap_KeySet() {
 
 func ExampleMultiMap_Values() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -255,7 +255,7 @@ func ExampleMultiMap_Values() {
 	tmp := make([]string, len(values))
 	count := 0
 	for _, value := range values {
-		tmp[count] = value.(string)
+		tmp[count] = value
 		count++
 	}
 	sort.Strings(tmp)
@@ -267,7 +267,7 @@ func ExampleMultiMap_Values() {
 
 func ExampleMultiMap_Remove() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x
@@ -291,7 +291,7 @@ func ExampleMultiMap_Remove() {
 
 func ExampleMultiMap_RemoveAll() {
 	// Create a new multimap
-	m := slicemultimap.New() // empty
+	m := slicemultimap.New[int, string]() // empty
 
 	// Put some contents to the multimap.
 	m.Put(1, "x") // 1->x

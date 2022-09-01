@@ -3,3 +3,22 @@ coverage.out
 
 # OS X
 .DS_Store
+
+.idea
+.vscode
+logs/
+*/.DS_Store
+.air.conf
+.github/
+tmp/
+dist/
+
+HELP.md
+
+
+### IntelliJ IDEA ###
+*.iws
+*.iml
+*.ipr
+target
+/logs

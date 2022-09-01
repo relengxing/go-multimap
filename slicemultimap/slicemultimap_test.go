@@ -4,15 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	multimap "github.com/jwangsadinata/go-multimap"
+	multimap "github.com/relengxing/go-multimap"
 )
 
-func AssertMultiMapImplementation(t *testing.T) {
-	var _ multimap.MultiMap = New()
-}
-
 func TestClear(t *testing.T) {
-	m := New()
+	m := New[int, string]()
 	m.Put(5, "e")
 	m.Put(6, "f")
 	m.Put(7, "g")
@@ -39,7 +35,7 @@ func TestClear(t *testing.T) {
 	}
 }
 func TestPut(t *testing.T) {
-	m := New()
+	m := New[int, string]()
 	m.Put(5, "e")
 	m.Put(6, "f")
 	m.Put(7, "g")
@@ -52,42 +48,42 @@ func TestPut(t *testing.T) {
 	if actualValue := m.Size(); actualValue != 8 {
 		t.Errorf("expected %v, got %v", 8, actualValue)
 	}
-	if actualValue, expectedValue := m.Keys(), []interface{}{1, 1, 2, 3, 4, 5, 6, 7}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.Keys(), []int{1, 1, 2, 3, 4, 5, 6, 7}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := m.KeySet(), []interface{}{1, 2, 3, 4, 5, 6, 7}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.KeySet(), []int{1, 2, 3, 4, 5, 6, 7}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := m.Values(), []interface{}{"a", "b", "c", "d", "e", "f", "g", "x"}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.Values(), []string{"a", "b", "c", "d", "e", "f", "g", "x"}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 
-	var expectedValue = []multimap.Entry{
-		multimap.Entry{Key: 1, Value: "a"},
-		multimap.Entry{Key: 1, Value: "x"},
-		multimap.Entry{Key: 2, Value: "b"},
-		multimap.Entry{Key: 3, Value: "c"},
-		multimap.Entry{Key: 4, Value: "d"},
-		multimap.Entry{Key: 5, Value: "e"},
-		multimap.Entry{Key: 6, Value: "f"},
-		multimap.Entry{Key: 7, Value: "g"},
+	var expectedValue = []multimap.Entry[int, string]{
+		multimap.Entry[int, string]{Key: 1, Value: "a"},
+		multimap.Entry[int, string]{Key: 1, Value: "x"},
+		multimap.Entry[int, string]{Key: 2, Value: "b"},
+		multimap.Entry[int, string]{Key: 3, Value: "c"},
+		multimap.Entry[int, string]{Key: 4, Value: "d"},
+		multimap.Entry[int, string]{Key: 5, Value: "e"},
+		multimap.Entry[int, string]{Key: 6, Value: "f"},
+		multimap.Entry[int, string]{Key: 7, Value: "g"},
 	}
 	if actualValue := m.Entries(); !sameEntries(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 
 	tests := []struct {
-		key           interface{}
-		expectedValue []interface{}
+		key           int
+		expectedValue []string
 		expectedFound bool
 	}{
-		{1, []interface{}{"a", "x"}, true},
-		{2, []interface{}{"b"}, true},
-		{3, []interface{}{"c"}, true},
-		{4, []interface{}{"d"}, true},
-		{5, []interface{}{"e"}, true},
-		{6, []interface{}{"f"}, true},
-		{7, []interface{}{"g"}, true},
+		{1, []string{"a", "x"}, true},
+		{2, []string{"b"}, true},
+		{3, []string{"c"}, true},
+		{4, []string{"d"}, true},
+		{5, []string{"e"}, true},
+		{6, []string{"f"}, true},
+		{7, []string{"g"}, true},
 		{8, nil, false},
 		{9, nil, false},
 	}
@@ -101,46 +97,46 @@ func TestPut(t *testing.T) {
 }
 
 func TestPutAll(t *testing.T) {
-	m := New()
+	m := New[int, string]()
 	m.Put(3, "c")
 	m.Put(4, "d")
 	m.Put(2, "b")
-	m.PutAll(1, []interface{}{"a", "x", "y"})
+	m.PutAll(1, []string{"a", "x", "y"})
 
 	if actualValue := m.Size(); actualValue != 6 {
 		t.Errorf("expected %v, got %v", 6, actualValue)
 	}
-	if actualValue, expectedValue := m.Keys(), []interface{}{1, 1, 1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.Keys(), []int{1, 1, 1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := m.KeySet(), []interface{}{1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.KeySet(), []int{1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := m.Values(), []interface{}{"a", "b", "c", "d", "x", "y"}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.Values(), []string{"a", "b", "c", "d", "x", "y"}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 
-	var expectedValue = []multimap.Entry{
-		multimap.Entry{Key: 1, Value: "a"},
-		multimap.Entry{Key: 1, Value: "x"},
-		multimap.Entry{Key: 1, Value: "y"},
-		multimap.Entry{Key: 2, Value: "b"},
-		multimap.Entry{Key: 3, Value: "c"},
-		multimap.Entry{Key: 4, Value: "d"},
+	var expectedValue = []multimap.Entry[int, string]{
+		multimap.Entry[int, string]{Key: 1, Value: "a"},
+		multimap.Entry[int, string]{Key: 1, Value: "x"},
+		multimap.Entry[int, string]{Key: 1, Value: "y"},
+		multimap.Entry[int, string]{Key: 2, Value: "b"},
+		multimap.Entry[int, string]{Key: 3, Value: "c"},
+		multimap.Entry[int, string]{Key: 4, Value: "d"},
 	}
 	if actualValue := m.Entries(); !sameEntries(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 
 	tests := []struct {
-		key           interface{}
-		expectedValue []interface{}
+		key           int
+		expectedValue []string
 		expectedFound bool
 	}{
-		{1, []interface{}{"a", "x", "y"}, true},
-		{2, []interface{}{"b"}, true},
-		{3, []interface{}{"c"}, true},
-		{4, []interface{}{"d"}, true},
+		{1, []string{"a", "x", "y"}, true},
+		{2, []string{"b"}, true},
+		{3, []string{"c"}, true},
+		{4, []string{"d"}, true},
 		{5, nil, false},
 		{6, nil, false},
 	}
@@ -155,11 +151,11 @@ func TestPutAll(t *testing.T) {
 }
 
 func TestContains(t *testing.T) {
-	m := New()
+	m := New[int, string]()
 	m.Put(3, "c")
 	m.Put(4, "d")
 	m.Put(2, "b")
-	m.PutAll(1, []interface{}{"a", "x", "y"})
+	m.PutAll(1, []string{"a", "x", "y"})
 
 	if actualValue, expectedValue := m.Contains(1, "a"), true; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
@@ -184,7 +180,7 @@ func TestContains(t *testing.T) {
 	}
 }
 func TestRemove(t *testing.T) {
-	m := New()
+	m := New[int, string]()
 	m.Put(5, "e")
 	m.Put(6, "f")
 	m.Put(7, "g")
@@ -203,36 +199,36 @@ func TestRemove(t *testing.T) {
 	if actualValue := m.Size(); actualValue != 5 {
 		t.Errorf("expected %v, got %v", 5, actualValue)
 	}
-	if actualValue, expectedValue := m.Keys(), []interface{}{1, 1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.Keys(), []int{1, 1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := m.KeySet(), []interface{}{1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.KeySet(), []int{1, 2, 3, 4}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := m.Values(), []interface{}{"a", "b", "c", "d", "x"}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.Values(), []string{"a", "b", "c", "d", "x"}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 
-	var expectedValue = []multimap.Entry{
-		multimap.Entry{Key: 1, Value: "a"},
-		multimap.Entry{Key: 1, Value: "x"},
-		multimap.Entry{Key: 2, Value: "b"},
-		multimap.Entry{Key: 3, Value: "c"},
-		multimap.Entry{Key: 4, Value: "d"},
+	var expectedValue = []multimap.Entry[int, string]{
+		multimap.Entry[int, string]{Key: 1, Value: "a"},
+		multimap.Entry[int, string]{Key: 1, Value: "x"},
+		multimap.Entry[int, string]{Key: 2, Value: "b"},
+		multimap.Entry[int, string]{Key: 3, Value: "c"},
+		multimap.Entry[int, string]{Key: 4, Value: "d"},
 	}
 	if actualValue := m.Entries(); !sameEntries(actualValue, expectedValue) {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 
 	tests := []struct {
-		key           interface{}
-		expectedValue []interface{}
+		key           int
+		expectedValue []string
 		expectedFound bool
 	}{
-		{1, []interface{}{"a", "x"}, true},
-		{2, []interface{}{"b"}, true},
-		{3, []interface{}{"c"}, true},
-		{4, []interface{}{"d"}, true},
+		{1, []string{"a", "x"}, true},
+		{2, []string{"b"}, true},
+		{3, []string{"c"}, true},
+		{4, []string{"d"}, true},
 		{5, nil, false},
 		{6, nil, false},
 		{7, nil, false},
@@ -254,16 +250,16 @@ func TestRemove(t *testing.T) {
 	m.Remove(2, "x")
 	m.Remove(2, "b")
 
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Keys()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.Keys()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.KeySet()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.KeySet()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Values()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.Values()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Entries()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.Entries()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 	if actualValue := m.Size(); actualValue != 0 {
@@ -275,7 +271,7 @@ func TestRemove(t *testing.T) {
 }
 
 func TestRemoveAll(t *testing.T) {
-	m := New()
+	m := New[int, string]()
 	m.Put(5, "e")
 	m.Put(6, "f")
 	m.Put(7, "g")
@@ -297,16 +293,16 @@ func TestRemoveAll(t *testing.T) {
 	m.RemoveAll(4)
 	m.RemoveAll(9)
 
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Keys()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.Keys()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.KeySet()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.KeySet()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Values()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.Values()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Entries()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%v", m.Entries()), "[]"; actualValue != expectedValue {
 		t.Errorf("expected %v, got %v", expectedValue, actualValue)
 	}
 	if actualValue := m.Size(); actualValue != 0 {
@@ -317,8 +313,8 @@ func TestRemoveAll(t *testing.T) {
 	}
 
 	tests := []struct {
-		key           interface{}
-		expectedValue []interface{}
+		key           int
+		expectedValue []string
 		expectedFound bool
 	}{
 		{1, nil, false},
@@ -341,7 +337,7 @@ func TestRemoveAll(t *testing.T) {
 }
 
 // Helper function to check equality of keys/values.
-func sameElements(a []interface{}, b []interface{}) bool {
+func sameElements[K comparable](a []K, b []K) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -361,7 +357,7 @@ func sameElements(a []interface{}, b []interface{}) bool {
 }
 
 // Helper function to check equality of entries.
-func sameEntries(a []multimap.Entry, b []multimap.Entry) bool {
+func sameEntries(a []multimap.Entry[int, string], b []multimap.Entry[int, string]) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -381,7 +377,7 @@ func sameEntries(a []multimap.Entry, b []multimap.Entry) bool {
 }
 
 // Utilities for Benchmarking
-func benchmarkGet(b *testing.B, m *MultiMap, size int) {
+func benchmarkGet(b *testing.B, m *MultiMap[int, int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			m.Get(n)
@@ -389,17 +385,17 @@ func benchmarkGet(b *testing.B, m *MultiMap, size int) {
 	}
 }
 
-func benchmarkPut(b *testing.B, m *MultiMap, size int) {
+func benchmarkPut(b *testing.B, m *MultiMap[int, int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
-			m.Put(n, struct{}{})
+			m.Put(n, 1)
 		}
 	}
 }
 
-func benchmarkPutAll(b *testing.B, m *MultiMap, size int) {
-	v := make([]interface{}, 0)
-	v = append(v, struct{}{})
+func benchmarkPutAll(b *testing.B, m *MultiMap[int, int], size int) {
+	v := make([]int, 0)
+	v = append(v, 1)
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			m.PutAll(n, v)
@@ -407,15 +403,15 @@ func benchmarkPutAll(b *testing.B, m *MultiMap, size int) {
 	}
 }
 
-func benchmarkRemove(b *testing.B, m *MultiMap, size int) {
+func benchmarkRemove(b *testing.B, m *MultiMap[int, int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
-			m.Remove(n, struct{}{})
+			m.Remove(n, 1)
 		}
 	}
 }
 
-func benchmarkRemoveAll(b *testing.B, m *MultiMap, size int) {
+func benchmarkRemoveAll[K comparable, V any](b *testing.B, m *MultiMap[int, int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			m.RemoveAll(n)
@@ -426,9 +422,9 @@ func benchmarkRemoveAll(b *testing.B, m *MultiMap, size int) {
 func BenchmarkMultiMapGet100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkGet(b, m, size)
@@ -437,9 +433,9 @@ func BenchmarkMultiMapGet100(b *testing.B) {
 func BenchmarkMultiMapGet1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkGet(b, m, size)
@@ -448,9 +444,9 @@ func BenchmarkMultiMapGet1000(b *testing.B) {
 func BenchmarkMultiMapGet10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkGet(b, m, size)
@@ -459,9 +455,9 @@ func BenchmarkMultiMapGet10000(b *testing.B) {
 func BenchmarkMultiMapGet100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkGet(b, m, size)
@@ -470,7 +466,7 @@ func BenchmarkMultiMapGet100000(b *testing.B) {
 func BenchmarkMultiMapPut100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := New()
+	m := New[int, int]()
 	b.StartTimer()
 	benchmarkPut(b, m, size)
 }
@@ -478,9 +474,9 @@ func BenchmarkMultiMapPut100(b *testing.B) {
 func BenchmarkMultiMapPut1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkPut(b, m, size)
@@ -489,9 +485,9 @@ func BenchmarkMultiMapPut1000(b *testing.B) {
 func BenchmarkMultiMapPut10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkPut(b, m, size)
@@ -500,9 +496,9 @@ func BenchmarkMultiMapPut10000(b *testing.B) {
 func BenchmarkMultiMapPut100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkPut(b, m, size)
@@ -511,7 +507,7 @@ func BenchmarkMultiMapPut100000(b *testing.B) {
 func BenchmarkMultiMapPutAll100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := New()
+	m := New[int, int]()
 	b.StartTimer()
 	benchmarkPutAll(b, m, size)
 }
@@ -519,9 +515,9 @@ func BenchmarkMultiMapPutAll100(b *testing.B) {
 func BenchmarkMultiMapPutAll1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkPutAll(b, m, size)
@@ -530,9 +526,9 @@ func BenchmarkMultiMapPutAll1000(b *testing.B) {
 func BenchmarkMultiMapPutAll10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkPutAll(b, m, size)
@@ -541,9 +537,9 @@ func BenchmarkMultiMapPutAll10000(b *testing.B) {
 func BenchmarkMultiMapPutAll100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkPutAll(b, m, size)
@@ -552,9 +548,9 @@ func BenchmarkMultiMapPutAll100000(b *testing.B) {
 func BenchmarkMultiMapRemove100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkRemove(b, m, size)
@@ -563,9 +559,9 @@ func BenchmarkMultiMapRemove100(b *testing.B) {
 func BenchmarkMultiMapRemove1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkRemove(b, m, size)
@@ -574,9 +570,9 @@ func BenchmarkMultiMapRemove1000(b *testing.B) {
 func BenchmarkMultiMapRemove10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkRemove(b, m, size)
@@ -585,9 +581,9 @@ func BenchmarkMultiMapRemove10000(b *testing.B) {
 func BenchmarkMultiMapRemove100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
 	benchmarkRemove(b, m, size)
@@ -596,43 +592,43 @@ func BenchmarkMultiMapRemove100000(b *testing.B) {
 func BenchmarkMultiMapRemoveAll100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
-	benchmarkRemoveAll(b, m, size)
+	benchmarkRemoveAll[int, int](b, m, size)
 }
 
 func BenchmarkMultiMapRemoveAll1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
-	benchmarkRemoveAll(b, m, size)
+	benchmarkRemoveAll[int, int](b, m, size)
 }
 
 func BenchmarkMultiMapRemoveAll10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
-	benchmarkRemoveAll(b, m, size)
+	benchmarkRemoveAll[int, int](b, m, size)
 }
 
 func BenchmarkMultiMapRemoveAll100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := New()
+	m := New[int, int]()
 	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+		m.Put(n, 1)
 	}
 	b.StartTimer()
-	benchmarkRemoveAll(b, m, size)
+	benchmarkRemoveAll[int, int](b, m, size)
 }
